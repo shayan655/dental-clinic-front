@@ -3,11 +3,31 @@ import { api } from '@/lib/api';
 
 // Fetch the currently authenticated user from Laravel
 // Returns null if not logged in
+// export async function getAuthUser(): Promise<User | null> {
+//   try {
+//     const response = await api.get<{ data: User }>('/api/user');
+//     return response.data;
+//   } catch {
+//     return null;
+//   }
+// }
+
 export async function getAuthUser(): Promise<User | null> {
   try {
     const response = await api.get<{ data: User }>('/api/user');
     return response.data;
   } catch {
+    // DEV ONLY: return a mock user when Laravel is unreachable
+    if (process.env.NODE_ENV === 'development') {
+      return {
+        id: 1,
+        name: 'Shayan Rahmati',
+        email: 'shayan@clinic.com',
+        role: 'clinic_manager',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+    }
     return null;
   }
 }
