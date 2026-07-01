@@ -36,8 +36,8 @@ async function getDashboardData(): Promise<DashboardData> {
       },
       todaysAppointments: [
         { id: 1, patientName: 'Sarah Johnson', time: '09:00', service: 'Cleaning', status: 'confirmed'},
-        { id: 2, patientName: 'Mark Ellis',    time: '10:30', service: 'Root Canal', status: 'checked_in'},
-        { id: 3, patientName: 'Lina Bauer',    time: '12:00', service: 'Checkup', status: 'checked_in'},
+        { id: 2, patientName: 'Mark Ellis',    time: '10:30', service: 'Root Canal', status: 'pending'},
+        { id: 3, patientName: 'Lina Bauer',    time: '12:00', service: 'Checkup', status: 'pending'},
         { id: 4, patientName: 'Tom Nguyen',    time: '14:00', service: 'Filling', status: 'confirmed'},
       ],
     }
@@ -80,6 +80,30 @@ function StatCard({
   )
 }
 
+function AppoinmentStatusBadge({ status }: { status: AppointmentStatus }) {
+  const styles: Record<AppointmentStatus, string> = {
+    pending: 'bg-amber-50 text-amber-700',
+    confirmed: 'bg-blue-50 text-blue-700',
+    in_progress: 'bg-indigo-50 text-indigo-700',
+    completed: 'bg-green-50 text-green-700',
+    cancelled: 'bg-red-50 text-red-700',
+  }
+
+  const labels: Record<AppointmentStatus, string> = {
+    pending: 'pending',
+    confirmed: 'confirmed',
+    in_progress: 'in_progress',
+    completed: 'completed',
+    cancelled: 'cancelled',
+  }
+
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status]}`}>
+      {labels[status]}
+    </span>
+  )
+}
+
 // --- Page ---
 export default async function DashboardPage() {
   const { stats, todaysAppointments } = await getDashboardData()
@@ -119,7 +143,38 @@ export default async function DashboardPage() {
                />
           </div>
 
-          {/* Appointments table — we'll build this after */}
+          {/* Today's Appointments */}
+          <div className=' bg-white rounded-xl border border-gray-200'>
+            <div className='px-6 py-4 border-b border-gray-100'>
+              <h2 className='text-base font-semibold text-gray-900'>Today`s Appointments</h2>
+              <p className='text-sm text-gray-500 mt-0.5'>All scheduled visits for today</p>
+            </div>
+
+            <div className='overflow-x-auto'>
+              <table className='w-full text-sm'>
+                <thead>
+                  <tr className='border-b border-gray-100 bg-gray-50 text-left'>
+                    <th className="px-6 py-3 font-medium text-gray-500">Time</th>
+                    <th className="px-6 py-3 font-medium text-gray-500">Patient</th>
+                    <th className="px-6 py-3 font-medium text-gray-500">Service</th>
+                    <th className="px-6 py-3 font-medium text-gray-500">Status</th>
+                  </tr>
+                </thead>
+                <tbody className='divide-y divide-gray-100'>
+                  {todaysAppointments.map((apt) => (
+                    <tr key={apt.id} className='hover:bg-gray-50 transition-colors'>
+                      <td className='px-6 py-4 font-medium text-gray-900'>{apt.time}</td>
+                      <td className='px-6 py-4 text-gray-700'>{apt.patientName}</td>
+                      <td className='px-6 py-4 text-gray-700'>{apt.service}</td>
+                      <td className='px-6 py-4'>
+                        <AppoinmentStatusBadge status={apt.status} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
     </div>
   )
 }
