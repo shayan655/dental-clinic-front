@@ -38,9 +38,9 @@ export interface Patient {
 // ============================================================
 
 export type AppointmentStatus =
-  | 'scheduled'
+  | 'pending'
   | 'confirmed'
-  | 'checked_in'
+  | 'in_progress'
   | 'completed'
   | 'cancelled';
 
