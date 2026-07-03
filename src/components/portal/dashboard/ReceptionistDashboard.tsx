@@ -13,9 +13,9 @@ export default function ReceptionistDashboard({ data }: { data: ReceptionistDash
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Appointments Today" value={stats.appointmentsToday} icon="📅" accent="blue"   />
-        <StatCard label="Checked In"         value={stats.checkedInCount}    icon="✅" accent="green"  />
-        <StatCard label="Pending Invoices"   value={stats.pendingInvoices}   icon="📄" accent="amber"  />
-        <StatCard label="New Patients Today" value={stats.newPatientsToday}  icon="🆕" accent="indigo" />
+        <StatCard label="Checked In" value={stats.checkedInCount} icon="✅" accent="green"  />
+        <StatCard label="Pending Invoices" value={stats.pendingInvoices} icon="📄" accent="amber"  />
+        <StatCard label="New Patients Today" value={stats.newPatientsToday} icon="🆕" accent="indigo" />
       </div>
 
       <AppointmentsTable appointments={todaysAppointments} />

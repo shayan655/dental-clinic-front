@@ -13,9 +13,9 @@ export default function DoctorDashboard({ data }: { data: DoctorDashboardData })
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="My Appointments Today" value={stats.myAppointmentsToday} icon="📅" accent="blue"   />
-        <StatCard label="My Total Patients"      value={stats.myTotalPatients}     icon="👥" accent="green"  />
-        <StatCard label="Completed Today"        value={stats.completedToday}      icon="✅" accent="indigo" />
-        <StatCard label="Pending Today"          value={stats.pendingToday}        icon="⏳" accent="amber"  />
+        <StatCard label="My Total Patients" value={stats.myTotalPatients} icon="👥" accent="green"  />
+        <StatCard label="Completed Today" value={stats.completedToday} icon="✅" accent="indigo" />
+        <StatCard label="Pending Today" value={stats.pendingToday} icon="⏳" accent="amber"  />
       </div>
 
       <AppointmentsTable appointments={todaysAppointments} />

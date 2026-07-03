@@ -13,9 +13,9 @@ export default function ManagerDashboard({ data }: { data: DashboardData }) {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Today's Appointments" value={stats.appointmentsToday} icon="📅" accent="blue"   />
-        <StatCard label="Total Patients"        value={stats.totalPatients}     icon="👥" accent="green"  />
-        <StatCard label="Pending Invoices"      value={stats.pendingInvoices}   icon="📄" accent="amber"  />
-        <StatCard label="Doctors on Duty"       value={stats.doctorsOnDuty}     icon="🦷" accent="indigo" />
+        <StatCard label="Total Patients" value={stats.totalPatients} icon="👥" accent="green"  />
+        <StatCard label="Pending Invoices" value={stats.pendingInvoices} icon="📄" accent="amber"  />
+        <StatCard label="Doctors on Duty" value={stats.doctorsOnDuty} icon="🦷" accent="indigo" />
       </div>
 
       <AppointmentsTable appointments={todaysAppointments} />
