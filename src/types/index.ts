@@ -125,3 +125,72 @@ export interface PaginatedResponse<T> {
   per_page: number;
   total: number;
 }
+
+// ============================================================
+// Dashboard types
+// ============================================================
+
+export type DashboardStats = {
+  appointmentsToday: number
+  totalPatients: number
+  pendingInvoices: number
+  doctorsOnDuty: number
+}
+
+export type DashboardAppointment = {
+  id: number
+  patientName: string
+  time: string
+  service: string
+  status: AppointmentStatus
+}
+
+export type DashboardData = {
+  stats: DashboardStats
+  todaysAppointments: DashboardAppointment[]
+}
+
+export type DoctorStats = {
+  myAppointmentsToday: number
+  myTotalPatients: number
+  completedToday: number
+  pendingToday: number
+}
+
+export type DoctorDashboardData = {
+  stats: DoctorStats
+  todaysAppointments: DashboardAppointment[]
+}
+
+export type ReceptionistStats = {
+  appointmentsToday: number
+  checkedInCount: number
+  pendingInvoices: number
+  newPatientsToday: number
+}
+
+export type ReceptionistDashboardData = {
+  stats: ReceptionistStats
+  todaysAppointments: DashboardAppointment[]
+}
+
+export type PatientUpcomingAppointment = {
+  id: number
+  date: string
+  time: string
+  service: string
+  doctorName: string
+  status: AppointmentStatus
+}
+
+export type PatientRecentVisit = {
+  id: number
+  date: string
+  service: string
+  notes: string
+}
+
+export type PatientDashboardData = {
+  nextAppointment: PatientUpcomingAppointment | null
+  recentVisits: PatientRecentVisit[]
+}

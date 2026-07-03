@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { User } from '@/types';
-import Link from 'next/link';
+import AuthBrandPanel from '@/components/ui/AuthBrandPanel';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,40 +34,17 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left panel — branding */}
-      <div className="hidden lg:flex w-1/2 bg-blue-700 flex-col justify-between p-12">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center">
-            <svg className="w-5 h-5 text-blue-700" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C8 2 5 5 5 8c0 2.5 1 4.5 2.5 6L9 22h6l1.5-8C18 12.5 19 10.5 19 8c0-3-3-6-7-6z" />
-            </svg>
-          </div>
-          <Link href='/' className="text-white font-semibold text-lg">DentalCare</Link>
-        </div>
-
-        <div>
-          <h1 className="text-4xl font-bold text-white leading-snug mb-4">
-            Your smile is our <br /> top priority.
-          </h1>
-          <p className="text-blue-200 text-sm leading-relaxed">
-            Manage appointments, patient records, and clinic operations — all in one place.
-          </p>
-        </div>
-
-        <div className="flex gap-4">
-          <div className="bg-blue-600 rounded-xl p-4 flex-1">
-            <p className="text-2xl font-bold text-white">1,200+</p>
-            <p className="text-blue-200 text-xs mt-1">Patients served</p>
-          </div>
-          <div className="bg-blue-600 rounded-xl p-4 flex-1">
-            <p className="text-2xl font-bold text-white">98%</p>
-            <p className="text-blue-200 text-xs mt-1">Satisfaction rate</p>
-          </div>
-          <div className="bg-blue-600 rounded-xl p-4 flex-1">
-            <p className="text-2xl font-bold text-white">8+</p>
-            <p className="text-blue-200 text-xs mt-1">Years of care</p>
-          </div>
-        </div>
-      </div>
+      <AuthBrandPanel 
+        headline={'Your smile is our \n top priority.'}
+        subtext='Manage appointments, patient records, and clinic operations — all in one place.'
+        items={
+          [
+            { icon: '🦷', text: 'Your patients are waiting for you' },
+            { icon: '📅', text: 'View and manage today\'s schedule' },
+            { icon: '📋', text: 'Stay on top of billing and records' },
+          ]
+        }
+      />
 
       {/* Right panel — form */}
       <div className="flex-1 flex items-center justify-center bg-gray-50 px-6">

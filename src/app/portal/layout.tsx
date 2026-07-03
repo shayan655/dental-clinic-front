@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
 import { User } from '@/types';
+import Link from 'next/link';
 
 // Nav items and which roles can see them
 const navItems = [
@@ -73,12 +74,10 @@ export default async function PortalLayout({
       <aside className="w-64 bg-blue-700 flex flex-col">
         {/* Logo */}
         <div className="flex items-center gap-3 px-6 py-5 border-b border-blue-600">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shrink-0">
-            <svg className="w-4 h-4 text-blue-700" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C8 2 5 5 5 8c0 2.5 1 4.5 2.5 6L9 22h6l1.5-8C18 12.5 19 10.5 19 8c0-3-3-6-7-6z" />
-            </svg>
+          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center shrink-0">
+            🦷
           </div>
-          <span className="text-white font-semibold text-base">DentalCare</span>
+          <Link href='/' className="text-white font-semibold text-base">DentalCare</Link>
         </div>
 
         {/* Nav */}
