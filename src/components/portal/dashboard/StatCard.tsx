@@ -18,7 +18,7 @@ export default function StatCard({ label, value, icon, accent }: StatCardProps) 
   const { bg, text } = accentClasses[accent]
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-start gap-4">
+    <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-start gap-4 shadow-xl">
       <div className={`${bg} ${text} text-2xl rounded-lg p-2`}>
         {icon}
       </div>
