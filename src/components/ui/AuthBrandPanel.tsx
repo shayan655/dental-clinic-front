@@ -1,3 +1,4 @@
+import Link from "next/link"
 
 type BulletItem = {
   icon: string
@@ -17,7 +18,7 @@ export default function AuthBrandPanel({ headline, subtext, items }: AuthBrandPa
         <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl">
           🦷
         </div>
-        <span className="text-xl font-bold">DentalCare</span>
+        <Link href="/" className="text-xl font-bold">DentalCare</Link>
       </div>
 
       <div>
