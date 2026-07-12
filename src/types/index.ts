@@ -49,6 +49,7 @@ export interface Appointment {
   patient_id: number;
   doctor_id: number;
   service_id: number;
+  duration_minutes: number;
   status: AppointmentStatus;
   scheduled_at: string;
   notes: string | null;
@@ -57,6 +58,11 @@ export interface Appointment {
   service?: Service;
   created_at: string;
   updated_at: string;
+}
+
+// --- Appointments page ---
+export type AppointmentsPageData = {
+  appointments: Appointment[]
 }
 
 // ============================================================
@@ -68,7 +74,7 @@ export interface Service {
   name: string;
   description: string | null;
   duration_minutes: number;
-  price: number;
+  price: string;
   created_at: string;
   updated_at: string;
 }
