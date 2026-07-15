@@ -1,6 +1,7 @@
 import { api } from '@/lib/api'
 import { Appointment, AppointmentsPageData } from '@/types'
 import AppointmentsClient from '@/components/portal/appointments/AppointmentsClient'
+import Link from 'next/link'
 
 async function getAppointments(): Promise<AppointmentsPageData> {
   try {
@@ -98,12 +99,12 @@ export default async function AppointmentsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Appointments</h1>
           <p className="text-sm text-gray-500 mt-1">Manage and track all clinic appointments.</p>
         </div>
-        <a
+        <Link
           href="/portal/appointments/new"
           className="bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
         >
           + New Appointment
-        </a>
+        </Link>
       </div>
 
       <AppointmentsClient appointments={appointments} />
