@@ -51,7 +51,6 @@ export default async function NewAppointmentPage() {
   const isStaff =
     user.role === 'clinic_manager' ||
     user.role === 'super_admin' ||
-    user.role === 'doctor' ||
     user.role === 'receptionist';
 
   return (
