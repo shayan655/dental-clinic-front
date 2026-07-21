@@ -1,7 +1,14 @@
 import { PatientDashboardData } from '@/types'
 import AppointmentStatusBadge from './AppointmentStatusBadge'
+import Link from 'next/link'
 
-export default function PatientDashboard({ data }: { data: PatientDashboardData }) {
+export default function PatientDashboard({
+  data,
+  patientId,
+}: {
+  data: PatientDashboardData
+  patientId: number
+}) {
   const { nextAppointment, recentVisits } = data
   return (
     <div className="space-y-8">
@@ -32,6 +39,12 @@ export default function PatientDashboard({ data }: { data: PatientDashboardData 
             <p className="text-sm mt-1">Book one to get started.</p>
           </div>
         )}
+        <Link
+          href={`/portal/patients/${patientId}/records`}
+          className="inline-block mt-3 text-sm text-blue-700 hover:text-blue-900 font-medium transition-colors"
+        >
+          View my medical records →
+        </Link>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200">
