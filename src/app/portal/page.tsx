@@ -110,7 +110,7 @@ export default async function DashboardPage() {
 
   if (role === 'patient') {
     const data = await getPatientDashboardData()
-    return <PatientDashboard data={data} />
+    return <PatientDashboard data={data} patientId={user?.id ?? 0} />
   }
 
   // manager + super_admin fall through to here
