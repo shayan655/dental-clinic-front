@@ -221,7 +221,7 @@ export default function StaffClient({ staff, isSuperAdmin }: Props) {
                   onChange={handleCreateChange}
                   required
                   placeholder="e.g. Dr. Sarah Mitchell"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -235,7 +235,7 @@ export default function StaffClient({ staff, isSuperAdmin }: Props) {
                   onChange={handleCreateChange}
                   required
                   placeholder="sarah@clinic.com"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -249,7 +249,7 @@ export default function StaffClient({ staff, isSuperAdmin }: Props) {
                 value={createForm.role}
                 onChange={handleCreateChange}
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 {availableRoles.map((r) => (
                   <option key={r.value} value={r.value}>{r.label}</option>
@@ -269,7 +269,7 @@ export default function StaffClient({ staff, isSuperAdmin }: Props) {
                   onChange={handleCreateChange}
                   required
                   placeholder="Min. 8 characters"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -283,7 +283,7 @@ export default function StaffClient({ staff, isSuperAdmin }: Props) {
                   onChange={handleCreateChange}
                   required
                   placeholder="Repeat password"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -400,7 +400,7 @@ export default function StaffClient({ staff, isSuperAdmin }: Props) {
                           value={editForm.name ?? ''}
                           onChange={handleEditChange}
                           required
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
@@ -413,7 +413,7 @@ export default function StaffClient({ staff, isSuperAdmin }: Props) {
                           value={editForm.email ?? ''}
                           onChange={handleEditChange}
                           required
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
@@ -424,7 +424,7 @@ export default function StaffClient({ staff, isSuperAdmin }: Props) {
                         name="role"
                         value={editForm.role ?? 'doctor'}
                         onChange={handleEditChange}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                       >
                         {availableRoles.map((r) => (
                           <option key={r.value} value={r.value}>{r.label}</option>
@@ -443,7 +443,7 @@ export default function StaffClient({ staff, isSuperAdmin }: Props) {
                           value={editForm.password ?? ''}
                           onChange={handleEditChange}
                           placeholder="Leave blank to keep current"
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
@@ -456,7 +456,7 @@ export default function StaffClient({ staff, isSuperAdmin }: Props) {
                           value={editForm.password_confirmation ?? ''}
                           onChange={handleEditChange}
                           placeholder="Repeat new password"
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
