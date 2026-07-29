@@ -221,7 +221,7 @@ export default function AppointmentDetail({
                 value={editForm.service_id}
                 onChange={handleEditChange}
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 {services.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -237,7 +237,7 @@ export default function AppointmentDetail({
                 value={editForm.doctor_id}
                 onChange={handleEditChange}
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 {doctors.map((d) => (
                   <option key={d.id} value={d.id}>
@@ -256,7 +256,7 @@ export default function AppointmentDetail({
                   onChange={handleEditChange}
                   required
                   min={today}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -267,7 +267,7 @@ export default function AppointmentDetail({
                   value={editForm.time}
                   onChange={handleEditChange}
                   required
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>

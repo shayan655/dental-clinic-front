@@ -143,7 +143,7 @@ export default function PatientProfile({ patient, appointments, canEdit }: Props
                 value={editForm.name}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -156,7 +156,7 @@ export default function PatientProfile({ patient, appointments, canEdit }: Props
                 value={editForm.email}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -169,7 +169,7 @@ export default function PatientProfile({ patient, appointments, canEdit }: Props
                 value={editForm.phone}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -183,7 +183,7 @@ export default function PatientProfile({ patient, appointments, canEdit }: Props
                 onChange={handleChange}
                 required
                 max={maxDOBString}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-black border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 

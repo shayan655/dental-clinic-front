@@ -23,7 +23,7 @@ export async function getAuthUser(): Promise<User | null> {
         id: 1,
         name: 'Shayan Rahmati',
         email: 'shayan@clinic.com',
-        role: 'doctor',
+        role: 'super_admin',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
