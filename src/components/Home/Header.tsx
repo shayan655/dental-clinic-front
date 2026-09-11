@@ -3,7 +3,7 @@ import Navbar from "./Navbar";
 
 export default function Header() {
   return (
-    <header className="overflow-hidden bg-blue-900 bg-[url('/images/dentist-header-bg.png')] bg-cover bg-center">
+    <header className="overflow-hidden bg-blue-900 bg-[url('/images/dentist-header-bg.png')] bg-cover bg-center text-white">
           {/* Navbar */}
           <Navbar />
 
