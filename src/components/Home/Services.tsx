@@ -12,7 +12,7 @@ export default function Services() {
                     <Services_card src="/images/dentist-services-3.png" alt="dentist-services-3" head="Implants placement" body="Pellentesque gravida tellus et lorem consectetur, ac accumsan nunc ultrices"/>
                </div>
                <div className="mx-auto py-0 text-center">
-                    <Link href={'/portal'} className="bg-blue-900 text-white text-lg px-8 py-4 rounded-full border-blue-900 transition-all hover:bg-blue-600">ALL SERVICES</Link>
+                    <Link href={'/services'} className="bg-blue-900 text-white text-lg px-8 py-4 rounded-full border-blue-900 transition-all hover:bg-blue-600">ALL SERVICES</Link>
                </div>
           </section>
      )
