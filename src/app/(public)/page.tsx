@@ -2,6 +2,7 @@
 
 import About_Us_Pricing from "@/components/Home/About-Us-&-Pricing";
 import Header from "@/components/Home/Header";
+import Hygiene from "@/components/Home/Hygiene";
 import Services from "@/components/Home/Services";
 
 export default function HomePage() {
@@ -10,6 +11,7 @@ export default function HomePage() {
           <Header />
           <Services />
           <About_Us_Pricing />
-    </main>
+          <Hygiene />
+      </main>
   );
 }
