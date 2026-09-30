@@ -21,7 +21,7 @@ export default function Navbar() {
         className="
           mt-3 flex items-center justify-between
           px-6 md:px-10 lg:px-16
-          bg-[rgba(255,255,255,0)]!
+          bg-[rgba(0,0,0,0)]!
         "
       >
         {/* Logo */}
