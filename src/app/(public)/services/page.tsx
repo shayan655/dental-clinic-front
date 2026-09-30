@@ -1,3 +1,5 @@
+import Footer from '@/components/Home/Footer';
+import Navbar from '@/components/Home/Navbar';
 import { getAuthUser } from '@/lib/auth';
 import { Service } from '@/types';
 import Link from 'next/link';
@@ -41,86 +43,92 @@ export default async function ServicesPage() {
   const bookingLabel = user ? 'Book Now' : 'Register to Book';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className='bg-blue-900'>
+      <Navbar />
 
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-6 py-16 text-center">
-          <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wide">
-            Our Services
-          </span>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Expert Dental Care,<br className="hidden sm:block" /> Tailored to You
-          </h1>
-          <p className="text-gray-500 text-lg max-w-xl mx-auto">
-            From routine checkups to advanced treatments — our experienced team is here to keep your smile healthy and bright.
-          </p>
+      <div className="min-h-screen bg-gray-50">
+
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-5xl mx-auto px-6 py-16 text-center">
+            <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wide">
+              Our Services
+            </span>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Expert Dental Care,<br className="hidden sm:block" /> Tailored to You
+            </h1>
+            <p className="text-gray-500 text-lg max-w-xl mx-auto">
+              From routine checkups to advanced treatments — our experienced team is here to keep your smile healthy and bright.
+            </p>
+          </div>
         </div>
-      </div>
 
-      {/* Services grid */}
-      <div className="max-w-5xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service) => (
-            <div
-              key={service.id}
-              className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col hover:shadow-md transition-shadow"
-            >
-              {/* Icon */}
-              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-2xl mb-5">
-                {SERVICE_ICONS[service.name] ?? '🦷'}
-              </div>
-
-              {/* Name */}
-              <h2 className="text-base font-semibold text-gray-900 mb-2">
-                {service.name}
-              </h2>
-
-              {/* Description */}
-              {service.description && (
-                <p className="text-sm text-gray-500 leading-relaxed mb-5 flex-1">
-                  {service.description}
-                </p>
-              )}
-
-              {/* Meta */}
-              <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
-                <div className="space-y-0.5">
-                  <p className="text-xs text-gray-400">Duration</p>
-                  <p className="text-sm font-medium text-gray-700">
-                    {service.duration_minutes} min
-                  </p>
-                </div>
-                <div className="text-right space-y-0.5">
-                  <p className="text-xs text-gray-400">Price</p>
-                  <p className="text-lg font-bold text-blue-700">
-                    €{service.price}
-                  </p>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <Link
-                href={bookingHref}
-                className="mt-4 block text-center bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+        {/* Services grid */}
+        <div className="max-w-5xl mx-auto px-6 py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((service) => (
+              <div
+                key={service.id}
+                className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col hover:shadow-md transition-shadow"
               >
-                {bookingLabel}
+                {/* Icon */}
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-2xl mb-5">
+                  {SERVICE_ICONS[service.name] ?? '🦷'}
+                </div>
+
+                {/* Name */}
+                <h2 className="text-base font-semibold text-gray-900 mb-2">
+                  {service.name}
+                </h2>
+
+                {/* Description */}
+                {service.description && (
+                  <p className="text-sm text-gray-500 leading-relaxed mb-5 flex-1">
+                    {service.description}
+                  </p>
+                )}
+
+                {/* Meta */}
+                <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                  <div className="space-y-0.5">
+                    <p className="text-xs text-gray-400">Duration</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      {service.duration_minutes} min
+                    </p>
+                  </div>
+                  <div className="text-right space-y-0.5">
+                    <p className="text-xs text-gray-400">Price</p>
+                    <p className="text-lg font-bold text-blue-700">
+                      €{service.price}
+                    </p>
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <Link
+                  href={bookingHref}
+                  className="mt-4 block text-center bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+                >
+                  {bookingLabel}
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom note for guests */}
+          {!user && (
+            <p className="text-center text-sm text-gray-400 mt-10">
+              Already have an account?{' '}
+              <Link href="/login" className="text-blue-700 hover:text-blue-900 font-medium transition-colors">
+                Log in to book
               </Link>
-            </div>
-          ))}
+            </p>
+          )}
         </div>
 
-        {/* Bottom note for guests */}
-        {!user && (
-          <p className="text-center text-sm text-gray-400 mt-10">
-            Already have an account?{' '}
-            <Link href="/login" className="text-blue-700 hover:text-blue-900 font-medium transition-colors">
-              Log in to book
-            </Link>
-          </p>
-        )}
       </div>
 
+      <Footer />
     </div>
   );
 }
