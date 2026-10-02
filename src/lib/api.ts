@@ -60,3 +60,29 @@ async function apiFetch<T>(
 }
 
 // api = { get, post, put, delete } stays exactly as you have it
+
+export const api = {
+  get<T>(endpoint: string) {
+    return apiFetch<T>(endpoint);
+  },
+
+  post<T>(endpoint: string, body?: unknown) {
+    return apiFetch<T>(endpoint, {
+      method: 'POST',
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  },
+
+  put<T>(endpoint: string, body: unknown) {
+    return apiFetch<T>(endpoint, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+  },
+
+  delete<T>(endpoint: string) {
+    return apiFetch<T>(endpoint, {
+      method: 'DELETE',
+    });
+  },
+};
