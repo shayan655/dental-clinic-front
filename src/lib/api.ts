@@ -25,6 +25,27 @@ export async function ensureCsrfCookie(): Promise<void> {
   });
 }
 
+// On the Next.js server there is no browser, so forward the visitor's cookies ourselves
+async function getServerHeaders(): Promise<Record<string, string>> {
+  if (typeof window !== 'undefined') return {};
+
+  try {
+    const { headers } = await import('next/headers');
+    const incoming = await headers();
+    const cookie = incoming.get('cookie');
+    const frontendUrl = process.env.FRONTEND_URL ?? 'http://app.clinic.test';
+
+    return {
+      ...(cookie ? { Cookie: cookie } : {}),
+      // Sanctum only treats a request as "our frontend" if Origin/Referer match
+      Origin: frontendUrl,
+      Referer: `${frontendUrl}/`,
+    };
+  } catch {
+    return {}; // e.g. called outside a request
+  }
+}
+
 async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -32,6 +53,7 @@ async function apiFetch<T>(
   const method = (options.method ?? 'GET').toUpperCase();
   const needsCsrf = method !== 'GET' && method !== 'HEAD';
   const xsrfToken = needsCsrf ? getCookie('XSRF-TOKEN') : null;
+  const serverHeaders = await getServerHeaders();
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
@@ -39,9 +61,11 @@ async function apiFetch<T>(
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       ...(xsrfToken ? { 'X-XSRF-TOKEN': xsrfToken } : {}),
+      ...serverHeaders,
       ...options.headers,
     },
     credentials: 'include',
+    ...(typeof window === 'undefined' ? { cache: 'no-store' as const } : {}),
   });
 
   if (!response.ok) {
