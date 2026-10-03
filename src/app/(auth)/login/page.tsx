@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { api } from '@/lib/api';
+import { api, ApiError, ensureCsrfCookie } from '@/lib/api';
 import { User } from '@/types';
 import AuthBrandPanel from '@/components/ui/AuthBrandPanel';
 
@@ -19,13 +19,19 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
-        credentials: 'include',
-      });
+      await ensureCsrfCookie();
       await api.post<{ data: User }>('/api/login', { email, password });
       router.push('/portal');
-    } catch {
-      setError('Invalid email or password. Please try again.');
+      router.refresh();
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 422) {
+        setError('Invalid email or password. Please try again.');
+      } else if (err instanceof ApiError && err.status === 429) {
+        setError('Too many attempts. Please wait a minute and try again.');
+      } else {
+        console.error(err);
+        setError('Could not sign in. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
