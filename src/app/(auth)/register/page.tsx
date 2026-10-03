@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { api } from '@/lib/api'
+import { api, ApiError, ensureCsrfCookie } from '@/lib/api'
 import AuthBrandPanel from '@/components/ui/AuthBrandPanel'
 
 export default function RegisterPage() {
@@ -31,17 +31,19 @@ export default function RegisterPage() {
     setError(null)
 
     try {
-      await api.get('/sanctum/csrf-cookie')
+      await ensureCsrfCookie()
       await api.post('/api/register', form)
       router.push('/portal')
+      router.refresh()
     } catch (err: unknown) {
-      if (err instanceof Error) {
+      if (err instanceof ApiError && err.errors) {
+        const firstError = Object.values(err.errors)[0]?.[0]
+        setError(firstError ?? err.message)
+      } else if (err instanceof Error) {
         setError(err.message)
       } else {
         setError('Something went wrong. Please try again.')
       }
-    } finally {
-      setLoading(false)
     }
   }
 

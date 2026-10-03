@@ -5,6 +5,7 @@ import ReceptionistDashboard from '@/components/portal/dashboard/ReceptionistDas
 import { api } from '@/lib/api'
 import { getAuthUser } from '@/lib/auth'
 import { DashboardData, DoctorDashboardData, PatientDashboardData, ReceptionistDashboardData } from '@/types'
+import { redirect } from 'next/navigation'
 
 // --- Data fetching ---
 async function getDashboardData(): Promise<DashboardData> {
@@ -96,7 +97,9 @@ async function getPatientDashboardData(): Promise<PatientDashboardData> {
 // --- Page ---
 export default async function DashboardPage() {
   const user = await getAuthUser()
-  const role = user?.role ?? 'patient'
+  if (!user) redirect('/login')
+
+  const role = user.role
 
   if (role === 'doctor') {
     const data = await getDoctorDashboardData()
@@ -110,7 +113,7 @@ export default async function DashboardPage() {
 
   if (role === 'patient') {
     const data = await getPatientDashboardData()
-    return <PatientDashboard data={data} patientId={user?.id ?? 0} />
+    return <PatientDashboard data={data} patientId={user.id} />
   }
 
   // manager + super_admin fall through to here

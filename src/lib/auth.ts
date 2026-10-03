@@ -17,17 +17,6 @@ export async function getAuthUser(): Promise<User | null> {
     const response = await api.get<{ data: User }>('/api/user');
     return response.data;
   } catch {
-    // DEV ONLY: return a mock user when Laravel is unreachable
-    if (process.env.NODE_ENV === 'development') {
-      return {
-        id: 1,
-        name: 'Shayan Rahmati',
-        email: 'shayan@clinic.com',
-        role: 'super_admin',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-    }
     return null;
   }
 }
