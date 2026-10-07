@@ -48,7 +48,8 @@ async function getServerHeaders(): Promise<Record<string, string>> {
 
 async function apiFetch<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  retried = false
 ): Promise<T> {
   const method = (options.method ?? 'GET').toUpperCase();
   const needsCsrf = method !== 'GET' && method !== 'HEAD';
@@ -67,6 +68,12 @@ async function apiFetch<T>(
     credentials: 'include',
     ...(typeof window === 'undefined' ? { cache: 'no-store' as const } : {}),
   });
+
+  // Token mismatch: get a fresh CSRF cookie and try once more (browser only)
+  if (response.status === 419 && !retried && typeof window !== 'undefined') {
+    await ensureCsrfCookie();
+    return apiFetch<T>(endpoint, options, true);
+  }
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));

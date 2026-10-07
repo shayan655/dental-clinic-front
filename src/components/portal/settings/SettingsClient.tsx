@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ClinicSettings, ClinicService, WorkingDay } from '@/app/portal/settings/page';
+import { api, ApiError } from '@/lib/api';
 
 interface Props {
   settings: ClinicSettings;
@@ -47,16 +48,12 @@ export default function SettingsClient({ settings, workingHours, services }: Pro
   const [serviceLoading, setServiceLoading] = useState(false);
   const [serviceError, setServiceError] = useState<string | null>(null);
 
-  async function csrfThenFetch(url: string, method: string, body: object) {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
-      credentials: 'include',
-    });
-    return fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(body),
-    });
+  function errorMessage(err: unknown, fallback: string) {
+    if (err instanceof ApiError) {
+      const firstFieldError = err.errors ? Object.values(err.errors)[0]?.[0] : null;
+      return firstFieldError ?? err.message;
+    }
+    return err instanceof Error ? err.message : fallback;
   }
 
   // General info handlers
@@ -69,21 +66,13 @@ export default function SettingsClient({ settings, workingHours, services }: Pro
     setInfoLoading(true);
     setInfoError(null);
     try {
-      const res = await csrfThenFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/settings`,
-        'PUT',
-        infoForm
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to update settings.');
-      }
+      await api.put('/api/settings', infoForm);
       setEditingInfo(false);
       setInfoSaved(true);
       setTimeout(() => setInfoSaved(false), 3000);
       router.refresh();
     } catch (err) {
-      setInfoError(err instanceof Error ? err.message : 'Something went wrong.');
+      setInfoError(errorMessage(err, 'Failed to update settings.'));
     } finally {
       setInfoLoading(false);
     }
@@ -97,24 +86,13 @@ export default function SettingsClient({ settings, workingHours, services }: Pro
   }
 
   async function handleHoursSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setHoursLoading(true);
-    setHoursError(null);
     try {
-      const res = await csrfThenFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/settings/hours`,
-        'PUT',
-        { hours }
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to update working hours.');
-      }
+      await api.put('/api/settings/hours', { hours });
       setHoursSaved(true);
       setTimeout(() => setHoursSaved(false), 3000);
       router.refresh();
     } catch (err) {
-      setHoursError(err instanceof Error ? err.message : 'Something went wrong.');
+      setHoursError(errorMessage(err, 'Failed to update working hours.'));
     } finally {
       setHoursLoading(false);
     }
@@ -144,23 +122,15 @@ export default function SettingsClient({ settings, workingHours, services }: Pro
     setServiceLoading(true);
     setServiceError(null);
     try {
-      const res = await csrfThenFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/services/${serviceId}`,
-        'PUT',
-        {
-          name: editServiceForm.name,
-          duration_minutes: Number(editServiceForm.duration_minutes),
-          price: editServiceForm.price,
-        }
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to update service.');
-      }
+      await api.put(`/api/services/${serviceId}`, {
+        name: editServiceForm.name,
+        duration_minutes: Number(editServiceForm.duration_minutes),
+        price: editServiceForm.price,
+      });
       setEditingServiceId(null);
       router.refresh();
     } catch (err) {
-      setServiceError(err instanceof Error ? err.message : 'Something went wrong.');
+      setServiceError(errorMessage(err, 'Failed to update service.'));
     } finally {
       setServiceLoading(false);
     }
@@ -171,24 +141,16 @@ export default function SettingsClient({ settings, workingHours, services }: Pro
     setServiceLoading(true);
     setServiceError(null);
     try {
-      const res = await csrfThenFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/services`,
-        'POST',
-        {
-          name: createServiceForm.name,
-          duration_minutes: Number(createServiceForm.duration_minutes),
-          price: createServiceForm.price,
-        }
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to create service.');
-      }
-      setShowCreateService(false);
-      setCreateServiceForm(emptyServiceForm);
-      router.refresh();
+      await api.post('/api/services', {
+      name: createServiceForm.name,
+      duration_minutes: Number(createServiceForm.duration_minutes),
+      price: createServiceForm.price,
+    });
+    setShowCreateService(false);
+    setCreateServiceForm(emptyServiceForm);
+    router.refresh();
     } catch (err) {
-      setServiceError(err instanceof Error ? err.message : 'Something went wrong.');
+      setServiceError(errorMessage(err, 'Failed to create service.'));
     } finally {
       setServiceLoading(false);
     }
@@ -198,25 +160,11 @@ export default function SettingsClient({ settings, workingHours, services }: Pro
     setServiceLoading(true);
     setServiceError(null);
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
-        credentials: 'include',
-      });
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/services/${serviceId}`,
-        {
-          method: 'DELETE',
-          headers: { Accept: 'application/json' },
-          credentials: 'include',
-        }
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to delete service.');
-      }
+      await api.delete(`/api/services/${serviceId}`);
       setDeleteConfirmId(null);
       router.refresh();
     } catch (err) {
-      setServiceError(err instanceof Error ? err.message : 'Something went wrong.');
+      setServiceError(errorMessage(err, 'Failed to delete service.'));
     } finally {
       setServiceLoading(false);
     }
