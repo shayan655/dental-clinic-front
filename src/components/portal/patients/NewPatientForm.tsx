@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { api, getErrorMessage } from '@/lib/api';
 
 type FormState = {
   name: string;
@@ -33,27 +34,11 @@ export default function NewPatientForm() {
     setError(null);
 
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
-        credentials: 'include',
-      });
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/patients`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to register patient. Please try again.');
-      }
-
+      await api.post('/api/patients', form);
       router.push('/portal/patients');
+      router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
+      setError(getErrorMessage(err, 'Failed to register patient. Please try again.'));
     }
   }
 

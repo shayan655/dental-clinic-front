@@ -12,6 +12,14 @@ export class ApiError extends Error {
   }
 }
 
+export function getErrorMessage(err: unknown, fallback = 'Something went wrong. Please try again.'): string {
+  if (err instanceof ApiError) {
+    const firstFieldError = err.errors ? Object.values(err.errors)[0]?.[0] : undefined;
+    return firstFieldError ?? err.message;
+  }
+  return err instanceof Error ? err.message : fallback;
+}
+
 function getCookie(name: string): string | null {
   if (typeof document === 'undefined') return null;
   const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));

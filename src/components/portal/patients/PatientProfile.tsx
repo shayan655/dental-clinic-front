@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Appointment, Patient } from '@/types';
 import AppointmentStatusBadge from '@/components/portal/dashboard/AppointmentStatusBadge';
 import Link from 'next/link';
+import { api, getErrorMessage } from '@/lib/api';
 
 interface Props {
   patient: Patient;
@@ -58,31 +59,11 @@ export default function PatientProfile({ patient, appointments, canEdit }: Props
     setError(null);
 
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
-        credentials: 'include',
-      });
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/patients/${patient.id}`,
-        {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify(editForm),
-        }
-      );
-
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to update patient.');
-      }
-
+      await api.put(`/api/patients/${patient.id}`, editForm);
       setEditing(false);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong.');
-    } finally {
-      setLoading(false);
+      setError(getErrorMessage(err, 'Failed to update patient.'));
     }
   }
 
