@@ -3,24 +3,15 @@ import { getAuthUser } from '@/lib/auth';
 import { Patient } from '@/types';
 import PatientsClient from '@/components/portal/patients/PatientsClient';
 import Link from 'next/link';
+import { api, ApiError } from '@/lib/api';
 
 async function getPatients(): Promise<Patient[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/patients`, {
-      credentials: 'include',
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error();
-    const json = await res.json();
-    return json.data;
-  } catch {
-    return [
-      { id: 1, user_id: 1, name: 'Emma Johnson', email: 'emma@example.com', phone: '+31 6 11111111', date_of_birth: '1990-04-15', created_at: '', updated_at: '' },
-      { id: 2, user_id: 2, name: 'Liam Patel', email: 'liam@example.com', phone: '+31 6 22222222', date_of_birth: '1985-09-23', created_at: '', updated_at: '' },
-      { id: 3, user_id: null, name: 'Sofia Müller', email: 'sofia@example.com', phone: '+31 6 33333333', date_of_birth: '1998-01-07', created_at: '', updated_at: '' },
-      { id: 4, user_id: 4, name: 'Noah Bakker', email: 'noah@example.com', phone: '+31 6 44444444', date_of_birth: '1972-11-30', created_at: '', updated_at: '' },
-      { id: 5, user_id: null, name: 'Ava de Vries', email: 'ava@example.com', phone: '+31 6 55555555', date_of_birth: '2001-06-18', created_at: '', updated_at: '' },
-    ];
+    const res = await api.get<{ data: Patient[] }>('/api/patients');
+    return res.data;
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) return [];
+    throw err;
   }
 }
 

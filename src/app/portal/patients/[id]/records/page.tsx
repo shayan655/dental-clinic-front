@@ -115,8 +115,7 @@ export default async function MedicalRecordsPage({
     redirect('/portal');
   }
 
-  if (user.role === 'patient' && String(user.id) !== id) {
-    console.log(user.role, user.id, (await params).id)
+  if (user.role === 'patient' && user.patient_id !== Number(id)) {
     redirect('/portal');
   }
 
