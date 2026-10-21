@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Appointment, AppointmentStatus, Service, User } from '@/types';
 import AppointmentStatusBadge from '@/components/portal/dashboard/AppointmentStatusBadge';
+import { api, getErrorMessage } from '@/lib/api';
 
 interface Props {
   appointment: Appointment;
@@ -60,16 +61,51 @@ export default function AppointmentDetail({
   const isCompleted = appointment.status === 'completed';
   const isLocked = isCancelled || isCompleted;
 
-  async function csrfThenFetch(url: string, method: string, body: object) {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
-      credentials: 'include',
-    });
-    return fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(body),
-    });
+  async function handleEditSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setActionLoading(true);
+    setActionError(null);
+    try {
+      await api.put(`/api/appointments/${appointment.id}`, {
+        service_id: Number(editForm.service_id),
+        doctor_id: Number(editForm.doctor_id),
+        scheduled_at: `${editForm.date}T${editForm.time}:00`,
+      });
+      setEditing(false);
+      router.refresh();
+    } catch (err) {
+      setActionError(getErrorMessage(err, 'Failed to update appointment.'));
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function handleStatusChange(status: AppointmentStatus) {
+    setActionLoading(true);
+    setActionError(null);
+    try {
+      await api.put(`/api/appointments/${appointment.id}`, { status });
+      router.refresh();
+    } catch (err) {
+      setActionError(getErrorMessage(err, 'Failed to update status.'));
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function handleSaveNotes() {
+    setSavingNotes(true);
+    setNotesError(null);
+    setNotesSaved(false);
+    try {
+      await api.put(`/api/appointments/${appointment.id}`, { notes });
+      setNotesSaved(true);
+      setTimeout(() => setNotesSaved(false), 3000);
+    } catch (err) {
+      setNotesError(getErrorMessage(err, 'Failed to save notes.'));
+    } finally {
+      setSavingNotes(false);
+    }
   }
 
   // Edit handlers
@@ -77,83 +113,10 @@ export default function AppointmentDetail({
     setEditForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  async function handleEditSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setActionLoading(true);
-    setActionError(null);
-    try {
-      const res = await csrfThenFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/${appointment.id}`,
-        'PUT',
-        {
-          service_id: Number(editForm.service_id),
-          doctor_id: Number(editForm.doctor_id),
-          scheduled_at: `${editForm.date}T${editForm.time}:00`,
-        }
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to update appointment.');
-      }
-      setEditing(false);
-      router.refresh();
-    } catch (err) {
-      setActionError(err instanceof Error ? err.message : 'Something went wrong.');
-    } finally {
-      setActionLoading(false);
-    }
-  }
-
-  // Status update
-  async function handleStatusChange(status: AppointmentStatus) {
-    setActionLoading(true);
-    setActionError(null);
-    try {
-      const res = await csrfThenFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/${appointment.id}`,
-        'PUT',
-        { status }
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to update status.');
-      }
-      router.refresh();
-    } catch (err) {
-      setActionError(err instanceof Error ? err.message : 'Something went wrong.');
-    } finally {
-      setActionLoading(false);
-    }
-  }
-
   // Cancel
   async function handleCancel() {
     if (!confirm('Are you sure you want to cancel this appointment?')) return;
     await handleStatusChange('cancelled');
-  }
-
-  // Notes save
-  async function handleSaveNotes() {
-    setSavingNotes(true);
-    setNotesError(null);
-    setNotesSaved(false);
-    try {
-      const res = await csrfThenFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/${appointment.id}`,
-        'PUT',
-        { notes }
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to save notes.');
-      }
-      setNotesSaved(true);
-      setTimeout(() => setNotesSaved(false), 3000);
-    } catch (err) {
-      setNotesError(err instanceof Error ? err.message : 'Something went wrong.');
-    } finally {
-      setSavingNotes(false);
-    }
   }
 
   const today = new Date().toISOString().split('T')[0];
