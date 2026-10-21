@@ -1,100 +1,21 @@
-import { redirect } from 'next/navigation';
-import { getAuthUser } from '@/lib/auth';
-import { MedicalRecord, Appointment } from '@/types';
-import MedicalRecords from '@/components/portal/patients/MedicalRecords';
+import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getAuthUser } from '@/lib/auth';
+import { api, ApiError } from '@/lib/api';
+import { Appointment, MedicalRecord, Patient } from '@/types';
+import MedicalRecords from '@/components/portal/patients/MedicalRecords';
 
-async function getPatientName(id: string): Promise<string> {
+async function loadPage(id: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/patients/${id}`, {
-      credentials: 'include',
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error();
-    const json = await res.json();
-    return json.data.name;
-  } catch {
-    return 'Emma Johnson';
-  }
-}
-
-async function getMedicalRecords(id: string): Promise<MedicalRecord[]> {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/patients/${id}/records`,
-      { credentials: 'include', cache: 'no-store' }
-    );
-    if (!res.ok) throw new Error();
-    const json = await res.json();
-    return json.data;
-  } catch {
-    return [
-      {
-        id: 1,
-        patient_id: Number(id),
-        doctor_id: 1,
-        appointment_id: 1,
-        diagnosis: 'Mild gingivitis with early-stage plaque buildup.',
-        treatment: 'Professional cleaning performed. Scaling and polishing completed.',
-        prescription: 'Chlorhexidine mouthwash 0.12% — twice daily for 2 weeks.',
-        notes: 'Patient advised to improve flossing technique. Follow-up in 6 months.',
-        created_at: '2025-06-15T09:45:00',
-        updated_at: '2025-06-15T09:45:00',
-      },
-      {
-        id: 2,
-        patient_id: Number(id),
-        doctor_id: 2,
-        appointment_id: 2,
-        diagnosis: 'Routine checkup — no issues found.',
-        treatment: 'Examination and X-rays taken. No cavities detected.',
-        prescription: null,
-        notes: null,
-        created_at: '2025-08-20T11:30:00',
-        updated_at: '2025-08-20T11:30:00',
-      },
-    ];
-  }
-}
-
-async function getPatientAppointments(id: string): Promise<Appointment[]> {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/appointments?patient_id=${id}`,
-      { credentials: 'include', cache: 'no-store' }
-    );
-    if (!res.ok) throw new Error();
-    const json = await res.json();
-    return json.data;
-  } catch {
-    return [
-      {
-        id: 1,
-        patient_id: Number(id),
-        doctor_id: 1,
-        service_id: 2,
-        duration_minutes: 45,
-        status: 'completed',
-        scheduled_at: '2025-06-15T09:00:00',
-        notes: null,
-        service: { id: 2, name: 'Teeth Cleaning', description: null, duration_minutes: 45, price: '80.00', created_at: '', updated_at: '' },
-        created_at: '',
-        updated_at: '',
-      },
-      {
-        id: 2,
-        patient_id: Number(id),
-        doctor_id: 2,
-        service_id: 1,
-        duration_minutes: 30,
-        status: 'completed',
-        scheduled_at: '2025-08-20T11:00:00',
-        notes: null,
-        service: { id: 1, name: 'General Checkup', description: null, duration_minutes: 30, price: '50.00', created_at: '', updated_at: '' },
-        created_at: '',
-        updated_at: '',
-      },
-    ];
+    const [patient, records, appointments] = await Promise.all([
+      api.get<{ data: Patient }>(`/api/patients/${id}`).then((r) => r.data),
+      api.get<{ data: MedicalRecord[] }>(`/api/patients/${id}/records`).then((r) => r.data),
+      api.get<{ data: Appointment[] }>(`/api/appointments?patient_id=${id}`).then((r) => r.data),
+    ]);
+    return { patient, records, appointments };
+  } catch (err) {
+    if (err instanceof ApiError && (err.status === 403 || err.status === 404)) return null;
+    throw err;
   }
 }
 
@@ -119,12 +40,10 @@ export default async function MedicalRecordsPage({
     redirect('/portal');
   }
 
-  const [patientName, records, appointments] = await Promise.all([
-    getPatientName(id),
-    getMedicalRecords(id),
-    getPatientAppointments(id),
-  ]);
+  const data = await loadPage(id);
+  if (!data) notFound();
 
+  const { patient, records, appointments } = data;
   const isDoctor = user.role === 'doctor';
 
   return (
@@ -136,13 +55,13 @@ export default async function MedicalRecordsPage({
           </Link>
           <span>/</span>
           <Link href={`/portal/patients/${id}`} className="hover:text-blue-700 transition-colors">
-            {patientName}
+            {patient.name}
           </Link>
           <span>/</span>
           <span className="text-gray-900 font-medium">Medical Records</span>
         </div>
         <h1 className="text-2xl font-bold text-gray-900">Medical Records</h1>
-        <p className="text-sm text-gray-500 mt-1">{patientName}</p>
+        <p className="text-sm text-gray-500 mt-1">{patient.name}</p>
       </div>
 
       <MedicalRecords

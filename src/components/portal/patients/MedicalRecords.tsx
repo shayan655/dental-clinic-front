@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Appointment, MedicalRecord } from '@/types';
+import { api, getErrorMessage } from '@/lib/api';
 
 interface Props {
   records: MedicalRecord[];
@@ -92,42 +93,22 @@ export default function MedicalRecords({
     setError(null);
   }
 
-  async function csrfThenFetch(url: string, method: string, body: object) {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
-      credentials: 'include',
-    });
-    return fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(body),
-    });
-  }
-
   async function handleEditSubmit(e: React.FormEvent, recordId: number) {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      const res = await csrfThenFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/patients/${patientId}/records/${recordId}`,
-        'PUT',
-        {
-          appointment_id: editForm.appointment_id ? Number(editForm.appointment_id) : null,
-          diagnosis: editForm.diagnosis,
-          treatment: editForm.treatment,
-          prescription: editForm.prescription || null,
-          notes: editForm.notes || null,
-        }
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to update record.');
-      }
+      await api.put(`/api/patients/${patientId}/records/${recordId}`, {
+        appointment_id: editForm.appointment_id ? Number(editForm.appointment_id) : null,
+        diagnosis: editForm.diagnosis,
+        treatment: editForm.treatment,
+        prescription: editForm.prescription || null,
+        notes: editForm.notes || null,
+      });
       setEditingId(null);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong.');
+      setError(getErrorMessage(err, 'Failed to update record.'));
     } finally {
       setLoading(false);
     }
@@ -138,26 +119,18 @@ export default function MedicalRecords({
     setLoading(true);
     setError(null);
     try {
-      const res = await csrfThenFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/patients/${patientId}/records`,
-        'POST',
-        {
-          appointment_id: createForm.appointment_id ? Number(createForm.appointment_id) : null,
-          diagnosis: createForm.diagnosis,
-          treatment: createForm.treatment,
-          prescription: createForm.prescription || null,
-          notes: createForm.notes || null,
-        }
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to create record.');
-      }
+      await api.post(`/api/patients/${patientId}/records`, {
+        appointment_id: createForm.appointment_id ? Number(createForm.appointment_id) : null,
+        diagnosis: createForm.diagnosis,
+        treatment: createForm.treatment,
+        prescription: createForm.prescription || null,
+        notes: createForm.notes || null,
+      });
       setShowCreateForm(false);
       setCreateForm(emptyForm);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong.');
+      setError(getErrorMessage(err, 'Failed to create record.'));
     } finally {
       setLoading(false);
     }
