@@ -1,11 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Invoice, InvoiceStatus } from '@/types';
+import { Invoice, InvoiceStatus, Patient } from '@/types';
+import InvoiceActions from './InvoiceActions';
+import NewInvoiceForm from './NewInvoiceForm';
 
 interface Props {
   invoices: Invoice[];
   isPatient: boolean;
+  patients: Patient[];
 }
 
 const STATUS_FILTERS: { label: string; value: InvoiceStatus | 'all' }[] = [
@@ -36,7 +39,7 @@ function formatAmount(amount: number) {
   }).format(amount);
 }
 
-export default function InvoicesClient({ invoices, isPatient }: Props) {
+export default function InvoicesClient({ invoices, isPatient, patients }: Props) {
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'all'>('all');
 
   const filtered = useMemo(() => {
@@ -46,6 +49,9 @@ export default function InvoicesClient({ invoices, isPatient }: Props) {
 
   return (
     <div className="space-y-4">
+
+      {/* New invoice — staff only */}
+      {!isPatient && <NewInvoiceForm patients={patients} />}
 
       {/* Status filter pills */}
       <div className="flex flex-wrap gap-2">
@@ -77,13 +83,14 @@ export default function InvoicesClient({ invoices, isPatient }: Props) {
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-6 py-3">Status</th>
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-6 py-3">Issued</th>
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-6 py-3">Paid</th>
+              {!isPatient && <th className="px-6 py-3" />}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {filtered.length === 0 ? (
               <tr>
                 <td
-                  colSpan={isPatient ? 5 : 6}
+                  colSpan={isPatient ? 5 : 7}
                   className="px-6 py-12 text-center text-sm text-gray-400"
                 >
                   No invoices found{statusFilter !== 'all' ? ` with status "${statusFilter}"` : ''}.
@@ -114,6 +121,11 @@ export default function InvoicesClient({ invoices, isPatient }: Props) {
                   <td className="px-6 py-4 text-gray-600">
                     {invoice.paid_at ? formatDate(invoice.paid_at) : '—'}
                   </td>
+                  {!isPatient && (
+                    <td className="px-6 py-4 text-right">
+                      <InvoiceActions invoice={invoice} />
+                    </td>
+                  )}
                 </tr>
               ))
             )}
@@ -159,6 +171,7 @@ export default function InvoicesClient({ invoices, isPatient }: Props) {
                   <span className="text-gray-900">{invoice.paid_at ? formatDate(invoice.paid_at) : '—'}</span>
                 </div>
               </div>
+              {!isPatient && <InvoiceActions invoice={invoice} />}
             </div>
           ))
         )}
