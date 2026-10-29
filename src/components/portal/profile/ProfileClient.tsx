@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, Role } from '@/types';
+import { api, getErrorMessage } from '@/lib/api';
 
 interface Props {
   user: User;
@@ -66,38 +67,18 @@ export default function ProfileClient({ user }: Props) {
     setPasswordForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  async function csrfThenFetch(url: string, method: string, body: object) {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
-      credentials: 'include',
-    });
-    return fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(body),
-    });
-  }
-
   async function handleInfoSubmit(e: React.FormEvent) {
     e.preventDefault();
     setInfoLoading(true);
     setInfoError(null);
     try {
-      const res = await csrfThenFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/profile`,
-        'PUT',
-        infoForm
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to update profile.');
-      }
+      await api.put('/api/profile', infoForm);
       setEditingInfo(false);
       setInfoSaved(true);
       setTimeout(() => setInfoSaved(false), 3000);
       router.refresh();
     } catch (err) {
-      setInfoError(err instanceof Error ? err.message : 'Something went wrong.');
+      setInfoError(getErrorMessage(err, 'Failed to update profile.'));
     } finally {
       setInfoLoading(false);
     }
@@ -114,15 +95,7 @@ export default function ProfileClient({ user }: Props) {
     setPasswordLoading(true);
     setPasswordError(null);
     try {
-      const res = await csrfThenFetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/profile/password`,
-        'PUT',
-        passwordForm
-      );
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to update password.');
-      }
+      await api.put('/api/profile/password', passwordForm);
       setPasswordForm({
         current_password: '',
         password: '',
@@ -131,7 +104,7 @@ export default function ProfileClient({ user }: Props) {
       setPasswordSaved(true);
       setTimeout(() => setPasswordSaved(false), 3000);
     } catch (err) {
-      setPasswordError(err instanceof Error ? err.message : 'Something went wrong.');
+      setPasswordError(getErrorMessage(err, 'Failed to update password.'));
     } finally {
       setPasswordLoading(false);
     }
