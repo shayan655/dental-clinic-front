@@ -15,6 +15,7 @@ export interface User {
   email: string;
   role: Role;
   patient_id?: number | null;
+  is_active?: boolean;
   created_at: string;
   updated_at: string;
 }
