@@ -52,6 +52,9 @@ export default function PatientDashboard({
           <h2 className="text-base font-semibold text-gray-900">Recent Visits</h2>
         </div>
         <div className="divide-y divide-gray-100">
+          {recentVisits.length === 0 && (
+            <p className="px-6 py-8 text-center text-sm text-gray-400">No visits yet.</p>
+          )}
           {recentVisits.map(visit => (
             <div key={visit.id} className="px-6 py-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1">
               <div>

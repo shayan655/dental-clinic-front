@@ -19,6 +19,13 @@ export default function AppointmentsTable({ appointments }: { appointments: Dash
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
+            {appointments.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-6 py-10 text-center text-sm text-gray-400">
+                  No appointments scheduled for today.
+                </td>
+              </tr>
+            )}
             {appointments.map((apt) => (
               <tr key={apt.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 font-medium text-gray-900">{apt.time}</td>
