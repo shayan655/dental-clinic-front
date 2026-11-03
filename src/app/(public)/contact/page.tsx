@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Home/Navbar';
 import Footer from '@/components/Home/Footer';
+import { api, ApiError, ensureCsrfCookie, getErrorMessage } from '@/lib/api';
 
 type ContactForm = {
   name: string;
@@ -64,23 +65,17 @@ export default function ContactPage() {
     setError(null);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.message ?? 'Failed to send message. Please try again.');
-      }
+      await ensureCsrfCookie();
+      await api.post('/api/contact', form);
 
       setSubmitted(true);
       setForm(initialForm);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
+      if (err instanceof ApiError && err.status === 429) {
+        setError('You have sent several messages in a row. Please try again in a few minutes.');
+      } else {
+        setError(getErrorMessage(err, 'Failed to send message. Please try again.'));
+      }
     }
   }
 
