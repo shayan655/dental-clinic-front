@@ -1,7 +1,11 @@
+import { getClinicInfo } from "@/lib/clinic";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Footer() {
+export default async function Footer() {
+  const clinic = await getClinicInfo();
+  const phoneHref = `tel:${clinic.phone.replace(/[^\d+]/g, "")}`;
+  
   return (
     <footer className="mt-16 bg-blue-950 text-white">
       {/* Main Footer */}
@@ -177,43 +181,42 @@ export default function Footer() {
             </h3>
 
             <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600/20 text-blue-300">
-                  📍
-                </span>
+              {clinic.address && (
+                <li className="flex items-start gap-3">
+                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600/20 text-blue-300">
+                    📍
+                  </span>
+                  <span className="text-sm leading-6 text-blue-100/70">{clinic.address}</span>
+                </li>
+              )}
 
-                <span className="text-sm leading-6 text-blue-100/70">
-                  123 Dental Street,
-                  <br />
-                  New York, USA
-                </span>
-              </li>
+              {clinic.phone && (
+                <li className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600/20 text-blue-300">
+                    ☎
+                  </span>
+                  <Link
+                    href={phoneHref}
+                    className="text-sm text-blue-100/70 transition-colors hover:text-white"
+                  >
+                    {clinic.phone}
+                  </Link>
+                </li>
+              )}
 
-              <li className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600/20 text-blue-300">
-                  ☎
-                </span>
-
-                <Link
-                  href="tel:+1234567890"
-                  className="text-sm text-blue-100/70 transition-colors hover:text-white"
-                >
-                  +1 234 567 890
-                </Link>
-              </li>
-
-              <li className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600/20 text-blue-300">
-                  @
-                </span>
-
-                <Link
-                  href="mailto:info@dentalclinic.com"
-                  className="break-all text-sm text-blue-100/70 transition-colors hover:text-white"
-                >
-                  info@dentalclinic.com
-                </Link>
-              </li>
+              {clinic.email && (
+                <li className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600/20 text-blue-300">
+                    @
+                  </span>
+                  <Link
+                    href={`mailto:${clinic.email}`}
+                    className="break-all text-sm text-blue-100/70 transition-colors hover:text-white"
+                  >
+                    {clinic.email}
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>
