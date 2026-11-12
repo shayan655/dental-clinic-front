@@ -6,6 +6,7 @@ import { Appointment, Patient } from '@/types';
 import AppointmentStatusBadge from '@/components/portal/dashboard/AppointmentStatusBadge';
 import Link from 'next/link';
 import { api, getErrorMessage } from '@/lib/api';
+import CreateLoginPanel from './CreateLoginPanel';
 
 interface Props {
   patient: Patient;
@@ -196,6 +197,8 @@ export default function PatientProfile({ patient, appointments, canEdit }: Props
           </form>
         )}
       </div>
+
+      {canEdit && !patient.user_id && <CreateLoginPanel patientId={patient.id} />}
 
       {/* Appointment history */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
