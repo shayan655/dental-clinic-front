@@ -1,46 +1,19 @@
 import { redirect } from 'next/navigation';
-import { getAuthUser } from '@/lib/auth';
-import { User } from '@/types';
 import Link from 'next/link';
+import { getAuthUser } from '@/lib/auth';
+import { api } from '@/lib/api';
+import { Role, User } from '@/types';
+import NavLink from '@/components/portal/NavLink';
+import SignOutButton from '@/components/portal/SignOutButton';
 
-// Nav items and which roles can see them
-const navItems = [
-  {
-    label: 'Dashboard',
-    href: '/portal',
-    roles: ['super_admin', 'clinic_manager', 'doctor', 'receptionist', 'patient'],
-  },
-  {
-    label: 'Appointments',
-    href: '/portal/appointments',
-    roles: ['super_admin', 'clinic_manager', 'doctor', 'receptionist', 'patient'],
-  },
-  {
-    label: 'Patients',
-    href: '/portal/patients',
-    roles: ['super_admin', 'clinic_manager', 'doctor', 'receptionist'],
-  },
-  {
-    label: 'Invoices',
-    href: '/portal/invoices',
-    roles: ['super_admin', 'clinic_manager', 'receptionist', 'patient'],
-  },
-  {
-    label: 'Staff',
-    href: '/portal/staff',
-    roles: ['super_admin', 'clinic_manager'],
-  },
-  {
-    label: 'Settings',
-    href: '/portal/settings',
-    roles: ['super_admin', 'clinic_manager'],
-  },
-  {
-    label: 'Profile',
-    href: '/portal/profile',
-    roles: ['super_admin', 'clinic_manager', 'doctor', 'receptionist', 'patient'],
-  },
-];
+type NavItem = {
+  label: string;
+  href: string;
+  roles: Role[];
+  badge?: number;
+};
+
+const FRONT_DESK: Role[] = ['super_admin', 'clinic_manager', 'receptionist'];
 
 function getRoleLabel(user: User): string {
   const labels: Record<string, string> = {
@@ -51,6 +24,16 @@ function getRoleLabel(user: User): string {
     patient: 'Patient',
   };
   return labels[user.role] ?? user.role;
+}
+
+// The badge is a convenience: a failure here must never break the whole portal
+async function getUnreadMessages(): Promise<number> {
+  try {
+    const res = await api.get<{ count: number }>('/api/contact-messages/unread-count');
+    return res.count;
+  } catch {
+    return 0;
+  }
 }
 
 export default async function PortalLayout({
@@ -64,9 +47,63 @@ export default async function PortalLayout({
     redirect('/login');
   }
 
-  const visibleNavItems = navItems.filter((item) =>
-    item.roles.includes(user.role)
-  );
+  const unreadMessages = FRONT_DESK.includes(user.role) ? await getUnreadMessages() : 0;
+
+  // Nav items and which roles can see them (the API enforces the real permissions)
+  const navItems: NavItem[] = [
+    {
+      label: 'Dashboard',
+      href: '/portal',
+      roles: ['super_admin', 'clinic_manager', 'doctor', 'receptionist', 'patient'],
+    },
+    {
+      label: 'Appointments',
+      href: '/portal/appointments',
+      roles: ['super_admin', 'clinic_manager', 'doctor', 'receptionist', 'patient'],
+    },
+    {
+      label: 'Patients',
+      href: '/portal/patients',
+      roles: ['super_admin', 'clinic_manager', 'doctor', 'receptionist'],
+    },
+    ...(user.role === 'patient' && user.patient_id
+      ? [
+          {
+            label: 'My Records',
+            href: `/portal/patients/${user.patient_id}/records`,
+            roles: ['patient'] as Role[],
+          },
+        ]
+      : []),
+    {
+      label: 'Invoices',
+      href: '/portal/invoices',
+      roles: ['super_admin', 'clinic_manager', 'receptionist', 'patient'],
+    },
+    {
+      label: 'Messages',
+      href: '/portal/messages',
+      roles: FRONT_DESK,
+      badge: unreadMessages,
+    },
+    {
+      label: 'Staff',
+      href: '/portal/staff',
+      roles: ['super_admin', 'clinic_manager'],
+    },
+    {
+      label: 'Settings',
+      href: '/portal/settings',
+      roles: ['super_admin', 'clinic_manager'],
+    },
+    {
+      label: 'Profile',
+      href: '/portal/profile',
+      roles: ['super_admin', 'clinic_manager', 'doctor', 'receptionist', 'patient'],
+    },
+  ];
+
+  const visibleNavItems = navItems.filter((item) => item.roles.includes(user.role));
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -77,19 +114,13 @@ export default async function PortalLayout({
           <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center shrink-0">
             🦷
           </div>
-          <Link href='/' className="text-white font-semibold text-base">DentalCare</Link>
+          <Link href="/" className="text-white font-semibold text-base">DentalCare</Link>
         </div>
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-1">
           {visibleNavItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-blue-100 hover:bg-blue-600 hover:text-white transition"
-            >
-              {item.label}
-            </a>
+            <NavLink key={item.href} href={item.href} label={item.label} badge={item.badge} />
           ))}
         </nav>
 
@@ -121,16 +152,12 @@ export default async function PortalLayout({
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
+                timeZone: 'Europe/Amsterdam',
               })}
             </p>
           </div>
 
-          <a
-            href="/api/logout"
-            className="text-xs text-gray-500 hover:text-red-500 transition font-medium"
-          >
-            Sign out
-          </a>
+          <SignOutButton />
         </header>
 
         {/* Page content */}
