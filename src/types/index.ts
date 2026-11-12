@@ -202,3 +202,13 @@ export type PatientDashboardData = {
   nextAppointment: PatientUpcomingAppointment | null
   recentVisits: PatientRecentVisit[]
 }
+
+export interface ContactMessage {
+  id: number;
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string;
+  read_at: string | null;
+  created_at: string;
+}
