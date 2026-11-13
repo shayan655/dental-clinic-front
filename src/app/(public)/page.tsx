@@ -1,7 +1,7 @@
 "use client";
 
 import About_Us_Pricing from "@/components/Home/About-Us-&-Pricing";
-import Footer from "@/components/Home/Footer";
+import Footer from "@/components/Home/FooterView";
 import Header from "@/components/Home/Header";
 import Hygiene from "@/components/Home/Hygiene";
 import Services from "@/components/Home/Services";

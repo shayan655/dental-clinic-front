@@ -1,4 +1,4 @@
-import Footer from '@/components/Home/Footer';
+import Footer from '@/components/Home/FooterView';
 import Navbar from '@/components/Home/Navbar';
 import { getAuthUser } from '@/lib/auth';
 import Link from 'next/link';

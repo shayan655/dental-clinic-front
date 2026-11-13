@@ -1,5 +1,5 @@
 import Navbar from '@/components/Home/Navbar';
-import Footer from '@/components/Home/Footer';
+import Footer from '@/components/Home/FooterView';
 import { formatHours, getClinicInfo, getWorkingHours } from '@/lib/clinic';
 import ContactContent from '@/components/contact/ContactContent';
 
